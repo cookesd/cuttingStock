@@ -170,7 +170,7 @@ for colNum in range(B.shape[1]):
         cutDict[dictKey][cut[1]]=cut[0]
     cutDict[dictKey]['waste']=waste
     
-
+printResult(cutDict)
 
 #def linprog_verbose_callback(xk, **kwargs):
 #    """
