@@ -1,0 +1,3 @@
+27 June 2019 Tester files:
+For a tester file you can make a method for each test you want to run and just call the method from the main.
+See the testers folder in the networkx package for a reference
