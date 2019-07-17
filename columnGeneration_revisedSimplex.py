@@ -37,7 +37,7 @@ def knapsack(values, weights, capacity,solVect = None):
     for i in range(len(values)):
         if weights[i] <= capacity:
             newCap = capacity-weights[i]
-            solMat[i][i] +=1 #####this part isn't working
+            solMat[i][i] +=1 
             sol[i],solMat[i] = knapsack(values, weights, newCap,solMat[i])
             
         else:
@@ -118,17 +118,18 @@ def calcDualVars(cB,Binv):
 
 
 #pre and post processing
-def printResult(resultDict):
+        
+def printResult(resultDF):
     '''Prints the result in a tabular format to the console
     
-    @param resultDict the dictionary of cut patterns with quantities of each cut size
+    @param resultDF the pd.DataFrame of cut patterns with quantities of each cut size
     '''
-    for pattern in resultDict:
-        print('\n',resultDict[pattern]['patternQuantity'][0],' (',resultDict[pattern]['patternQuantity'][1],') Cuts of Pattern ',pattern[len(pattern)-1],':',sep='')
-        for cut in resultDict[pattern]:
+    for pattern in resultDF:
+        print('\n',resultDF[pattern]['patternQuantity'][0],' (',resultDF[pattern]['patternQuantity'][1],') Cuts of Pattern ',pattern[len(pattern)-1],':',sep='')
+        for cut in resultDF[pattern].index:
             if cut != 'patternQuantity' and cut != 'waste':
-                print(resultDict[pattern][cut],'cuts of length',cut)
-        print('with', resultDict[pattern]['waste'], 'units of waste')
+                print(resultDF[pattern][cut],'cuts of length',cut)
+        print('with', resultDF[pattern]['waste'], 'units of waste')
 
 def buildModel(fName = None,bLength = None,lenDict = None):
     if fName == None:
@@ -142,29 +143,32 @@ def buildModel(fName = None,bLength = None,lenDict = None):
         assert os.path.exists(fName), 'This is not a valid path'
     
 # plotting as bar graph
-def plotResult(cut_dict):
+def plotResult(resultDF):
     '''Plots the result as a stacked bar graph using matplotlib.pyplot interface for pd.DataFrame
     
     @param cut_dict the dictionary of cut patterns with quantities of each cut size
     '''
-    cutDF = pd.DataFrame(cut_dict)
-    cutsPerPattern = cutDF.drop(['patternQuantity','waste'],axis=0).sum()
+    cutsPerPattern = resultDF.drop(['patternQuantity','waste'],axis=0).sum()
     maxNumCuts = int(max(cutsPerPattern))
+    print(maxNumCuts)
     rows = ['cut'+str(i+1) for i in range(maxNumCuts)]
-    cols = [col for col in cutDF.columns]
+    cols = [col for col in resultDF.columns]
     rows.append('waste')
     
     plotDF = pd.DataFrame(index=rows,columns = cols) #makes empty df with appropriate row/cols & names
     
-    for pattern in cutDF.columns:
+    for pattern in resultDF.columns:
         cutNum=1
         patternDict = {}
-        for index in cutDF.drop(['patternQuantity','waste']).index:
+        for index in resultDF.drop(['patternQuantity','waste']).index:
             #accounts for duplicate cuts of the same size & skips sizes with zero cuts
-            if cutDF[pattern][index]>0:
-                for i in range(int(cutDF[pattern][index])):
+            if resultDF[pattern][index]>0:
+                print(pattern,index,resultDF[pattern][index])
+                for i in range(int(np.round(cutDF[pattern][index],0))):
                     patternDict['cut'+str(cutNum)]=float(index)
+                    print(patternDict,i)
                     cutNum+=1
+        print(pattern,'\n',patternDict)
         #fills remaining cuts with zero lengths
         if cutNum <= maxNumCuts:
             remainingCuts = maxNumCuts+1-cutNum
@@ -175,21 +179,23 @@ def plotResult(cut_dict):
         plotDF[pattern] = patternSeries #adds the series for the pattern in the appropriate col in cutDF
     
     plotDF = plotDF.transpose() #transposes plotDF to make the stacked bar plot
-    
+    print(plotDF)
     #plots cut patterns using stacked bargraphs
-    ax =plotDF.plot(kind='bar',stacked=True,edgecolor='k') #plots stacked bar graph
+    ax =plotDF.plot(kind='bar',stacked=True,edgecolor='k',legend=False) #plots stacked bar graph
     for p in ax.patches:
         #plots cut size in each bar if height > 0.0
-        if p.get_height()>0.0:
-            ax.annotate(str(p.get_height()), (p.get_x()+.25*p.get_width(),p.get_y()+.5*p.get_height()))
+        if p.get_height()>epsilon:
+            ax.annotate(str(np.round(p.get_height())), (p.get_x()+.25*p.get_width(),p.get_y()+.5*p.get_height()))
     
     
         
         
 ##### main method #####
-verbose = False
+verbose = True
 #infile = r'C:\Users\cookesd\Desktop\cookesdRepos\cuttingStock\winstonExample(570).txt'
-infile = r'C:\Users\cookesd\Desktop\cookesdRepos\cuttingStock\consoleTable_n_plants.txt'
+#infile = r'C:\Users\cookesd\Desktop\cookesdRepos\cuttingStock\consoleTable_n_plants.txt'
+#infile = r'C:\Users\cookesd\Desktop\cookesdRepos\cuttingStock\dad_simple_test.txt'
+infile = r'C:\Users\cookesd\Desktop\cookesdRepos\cuttingStock\dad_dims_ints.txt'
 #infile = 'winstonExample(570).txt'
 lenDict = {}
 boardLength = None
@@ -233,6 +239,7 @@ while benefit-1>epsilon:
         enteringCol = np.reshape(enteringCol,(len(enteringCol),1)) #ensures this is column vector
     else:
         print('The problem is unbounded')
+        benefit = 0
     print('B\n',B)
     print('bbar\n',bbar)
     print('cb\n',cB)
@@ -257,10 +264,16 @@ for colNum in range(len(bbar)):
     for cut in pattern:
         cutDict[dictKey][cut[1]]=cut[0]
     cutDict[dictKey]['waste']=waste
+
+cutDF = pd.DataFrame(cutDict)
+printResult(cutDF)
+plotResult(cutDF)
+
+#next updates are to make this a module to call and make some tester files
+#module needs to be able to:
+    # receive board length and the required dict
+    #return the final cut dict
+    #be able to call printResult and plotResult
     
-printResult(cutDict)
-plotResult(cutDict)
-
-
 
 
