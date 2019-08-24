@@ -7,6 +7,7 @@ Tests the methods of the CuttingStock class
 """
 
 from my_packages import CuttingStock as cs
+import os
 
 # Cutting Stock tester
 
@@ -50,8 +51,9 @@ print(cs2.boardLength)
 
 #tests the Cutting Stock algorithm
 ld = {}
-fName = r'C:\Users\dakar\Desktop\cookesdRepos\cuttingstock\cuttingstock\consoleTable_n_plants.txt'
-with open(fName) as f:
+#must run the whole file for to get the right directory
+#or change the cwd to the desired directory
+with open(os.path.join(os.path.dirname(os.path.realpath('cs_tester.py')),'consoleTable.txt')) as f:
     bl = int(f.readline())
     for line in f.readlines():
         line=line.split(',')
