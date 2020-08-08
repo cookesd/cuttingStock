@@ -8,6 +8,7 @@ Created on Tue Aug 13 19:24:48 2019
 
 
 class CuttingStock:
+    from .solving import solve #imports the solve method of the class
     # I could set class attributes here using <attribute>=<value>
     # All instances of the class would have that value
     cut_factory = dict
