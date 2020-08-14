@@ -6,7 +6,8 @@ Tests the methods of the CuttingStock class
 @author: dakar
 """
 
-from my_packages import CuttingStock as cs
+import classes as cs # runs the init in classes dir
+# from classes import CuttingStock as cs
 import os
 
 # Cutting Stock tester
@@ -53,7 +54,7 @@ print(cs2.boardLength)
 ld = {}
 #must run the whole file for to get the right directory
 #or change the cwd to the desired directory
-with open(os.path.join(os.path.dirname(os.path.realpath('cs_tester.py')),'consoleTable.txt')) as f:
+with open(os.path.join(os.path.dirname(os.path.realpath('cs_tester.py')),'./data/consoleTable.txt')) as f:
     bl = int(f.readline())
     for line in f.readlines():
         line=line.split(',')
@@ -62,9 +63,11 @@ with open(os.path.join(os.path.dirname(os.path.realpath('cs_tester.py')),'consol
 
 testCS = cs.CuttingStock(ld,bl)
 print(testCS)
-res = cs.cuttingStockProblem(testCS)
+res = testCS.solve()
 
 # tests the CuttingStockSolution class
+res.cut_plot() # shows the 
+print(res) # print the result info
 res.plotResult()
 res.printResult()
 df = res.to_DataFrame()
