@@ -5,10 +5,10 @@ Created on Fri Aug 23 21:28:58 2019
 @author: dakar
 """
 import pandas as pd
-import numpy as np
-import seaborn as sns
+# import numpy as np
+# import seaborn as sns
 import plotnine as p9
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 class CuttingStockSolution:
     
     def __init__(self,solution):

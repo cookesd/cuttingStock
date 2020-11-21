@@ -1,6 +1,9 @@
--# cuttingStock
--Solves cutting stock problem using column generation
--Solves the column generation by solving a unbounded knapsack problem using dynamic programming (recursion)
+# cuttingStock
+
+- Solves cutting stock problem using column generation
+- Solves the column generation by solving a unbounded knapsack problem using dynamic programming (recursion)
+- Currently solves for continuous valued number of cuts and uses rudimentary rounding up to ensure integrality
+- The solution shows the integer and non-integer solution
 
 - `classes` directory has two classes:
 	- `CuttingStock` class to make the cutting stock problem with a method to solve it (method is in a separate script).
